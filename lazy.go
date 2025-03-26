@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"lazy/nodesetup"
 	"os"
+	"sync"
 )
 
 const projectsPath = "C:/test/programs"
@@ -63,4 +65,23 @@ func main() {
 	} else {
 		displayHelp()
 	}
+
+	
+	wg := sync.WaitGroup{}
+	wg.Add(3)
+	var name string
+	fmt.Print("Enter your Name : ")
+	fmt.Scanln(&name)
+	err := os.Mkdir(name, 0755)
+	if err != nil {
+		fmt.Println("Error creating directory", err)
+	}
+	os.Chdir(name)
+
+	go nodesetup.CtreateNodeServer(&wg)
+	go nodesetup.InitNode(&wg)
+	go nodesetup.CreateFolderStruct(&wg)
+
+	wg.Wait()
+	fmt.Println("Project setup completed")
 }
