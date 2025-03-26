@@ -10,21 +10,25 @@ import (
 	"golang.org/x/oauth2"
 )
 
-const projectsPath = "C:/hackathon/program"
+const projectsPath = "C:/hackathon/programs"
 
-// type Template struct {
-// 	cmd          string
-// 	folderNeeded bool
-// }
+type Template struct {
+	Cmd          string
+	FolderNeeded bool
+}
 
-// type Templates map[string]Template
+type Templates map[string]Template
 
-// var templates = Templates{
-// 	"--cpp": {
-// 		cmd:          "mkdir bin && mkdir src && mkdir user && echo //Code Here > main.cpp",
-// 		folderNeeded: false,
-// 	},
-// }
+var templates = Templates{
+	"--cpp": {
+		Cmd:          "mkdir bin,src,user && echo //Program Here > main.cpp",
+		FolderNeeded: true,
+	},
+	"--node-react-vite": {
+		Cmd:          "npm create vite@latest $ProjectName -- --template react && cd $ProjectName && npm install",
+		FolderNeeded: false,
+	},
+}
 
 func displayHelp() {
 	fmt.Println()
@@ -36,8 +40,12 @@ func displayHelp() {
 	fmt.Println()
 }
 
-func createNewProject() {
-	fmt.Println("Creating")
+func createNewProject(argumentsCount int) {
+	if argumentsCount > 3 || argumentsCount < 3 {
+		fmt.Println("\nInvalid arguments!!")
+		fmt.Println("Usage: lazy create <project-name> <--template>")
+		return
+	}
 }
 
 func listProjects(argumentsCount int) {
@@ -97,7 +105,7 @@ func main() {
 	argumentsCount := len(os.Args) - 1
 	if argumentsCount > 0 {
 		if os.Args[1] == "create" {
-			createNewProject()
+			createNewProject(argumentsCount)
 		} else if os.Args[1] == "list" {
 			listProjects(argumentsCount)
 		} else {
