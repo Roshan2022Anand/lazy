@@ -5,6 +5,8 @@ import (
 	"os"
 )
 
+const projectsPath = "C:/test/programs"
+
 // type Template struct {
 // 	cmd          string
 // 	folderNeeded bool
@@ -29,17 +31,32 @@ func displayHelp() {
 	fmt.Println()
 }
 
-// func listProjects() {
+func createNewProject() {
+	fmt.Println("Creating")
+}
 
-// }
+func listProjects(argumentsCount int) {
+	if argumentsCount > 1 || argumentsCount < 1 {
+		fmt.Println("\nInvalid Arguments!!")
+		fmt.Println("Usage: lazy list")
+	} else {
+		entries, _ := os.ReadDir(projectsPath)
+		fmt.Println("\nDirectories:")
+		for _, e := range entries {
+			if e.IsDir() {
+				fmt.Println(" ", e.Name())
+			}
+		}
+	}
+}
 
 func main() {
 	argumentsCount := len(os.Args) - 1
-	if argumentsCount > 1 {
+	if argumentsCount > 0 {
 		if os.Args[1] == "create" {
-			// createNewProject()
+			createNewProject()
 		} else if os.Args[1] == "list" {
-			// listProjects()
+			listProjects(argumentsCount)
 		} else {
 			displayHelp()
 		}
