@@ -1,11 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/exec"
+
+	"github.com/google/go-github/v50/github"
+	"golang.org/x/oauth2"
 )
 
-const projectsPath = "C:/test/programs"
+const projectsPath = "C:/hackathon/program"
 
 // type Template struct {
 // 	cmd          string
@@ -17,7 +22,7 @@ const projectsPath = "C:/test/programs"
 // var templates = Templates{
 // 	"--cpp": {
 // 		cmd:          "mkdir bin && mkdir src && mkdir user && echo //Code Here > main.cpp",
-// 		folderNeeded: false, // Changed from = to : for struct literal
+// 		folderNeeded: false,
 // 	},
 // }
 
@@ -36,6 +41,7 @@ func createNewProject() {
 }
 
 func listProjects(argumentsCount int) {
+	// Handling Invalid arguments
 	if argumentsCount > 1 || argumentsCount < 1 {
 		fmt.Println("\nInvalid Arguments!!")
 		fmt.Println("Usage: lazy list")
@@ -48,6 +54,43 @@ func listProjects(argumentsCount int) {
 			}
 		}
 	}
+}
+
+func directoryExists(path string) bool {
+	info, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return info.IsDir()
+}
+
+func createGitHubRepo(token, name string) (*github.Repository, error) {
+	// Create authenticated GitHub client
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	client := github.NewClient(tc)
+
+	// Create repository request
+	repo := &github.Repository{
+		Name:    github.String(name),
+		Private: github.Bool(false),
+	}
+
+	// Create the repository
+	createdRepo, _, err := client.Repositories.Create(ctx, "", repo)
+	if err != nil {
+		return nil, err
+	}
+	return createdRepo, nil
+}
+
+func connectLocalToRemote(localPath, remoteURL string) error {
+	cmd := exec.Command("git", "remote", "add", "origin", remoteURL)
+	cmd.Dir = localPath
+	return cmd.Run()
 }
 
 func main() {
