@@ -66,9 +66,8 @@ func main() {
 		displayHelp()
 	}
 
-	
 	wg := sync.WaitGroup{}
-	wg.Add(3)
+	wg.Add(4)
 	var name string
 	fmt.Print("Enter your Name : ")
 	fmt.Scanln(&name)
@@ -78,10 +77,11 @@ func main() {
 	}
 	os.Chdir(name)
 
+	nodesetup.InitNode()
 	go nodesetup.CtreateNodeServer(&wg)
-	go nodesetup.InitNode(&wg)
 	go nodesetup.CreateFolderStruct(&wg)
-
+	go nodesetup.CreateGitIgnore(&wg)
+	go nodesetup.SetupTypeScript(&wg)
 	wg.Wait()
 	fmt.Println("Project setup completed")
 }
